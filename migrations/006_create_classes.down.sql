@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS classes;
+DROP TYPE IF EXISTS class_shift;

@@ -1,0 +1,22 @@
+{
+  "integration": "kimi",
+  "version": "0.5.1.dev0",
+  "installed_at": "2026-04-24T17:19:19.000000+00:00",
+  "files": {
+    ".kimi/skills/speckit-analyze/SKILL.md": "79282ee8d194cca4ec54b2749fa65973300303f22eb768a37ba5f0b0d8397b76",
+    ".kimi/skills/speckit-checklist/SKILL.md": "6db52b7e393e2aec8c1a63d49352bae75d5f79e386f1754c9f7d44c89b413179",
+    ".kimi/skills/speckit-clarify/SKILL.md": "30a36773b207743cfeac340d8d519dea8ecf79c474ece09ed59f1c0f0d093627",
+    ".kimi/skills/speckit-constitution/SKILL.md": "ed6fde3cff810d6540ca2f9347b35a2b60b056e76fc1dfb0871b396bad038285",
+    ".kimi/skills/speckit-git-commit/SKILL.md": "123c0e4a0f754e9e9f51cd3092d9db2701777592b18b0b75ad590fbf4f5447e6",
+    ".kimi/skills/speckit-git-feature/SKILL.md": "703930be998ae971d5278549bf4c26386d004a7dcc0b7c3a5ee5636b225017c1",
+    ".kimi/skills/speckit-git-initialize/SKILL.md": "4c762530b51f59bb86c7889e09a0e6e5acd6dad7f599f2a1f25a0307f640e90a",
+    ".kimi/skills/speckit-git-remote/SKILL.md": "751571934c4df4283af560ffd916f1827e876482839f4dec4074d2435d41a1e1",
+    ".kimi/skills/speckit-git-validate/SKILL.md": "247041c8d5e34d4195ac4180d337f2f76341afcb12e131d094780140edaa804d",
+    ".kimi/skills/speckit-implement/SKILL.md": "69501253105e6cd5f734f2a90019065f0f48e9d35c22fa73579c3aec7de578b6",
+    ".kimi/skills/speckit-plan/SKILL.md": "f4cbbc5664378b88630d2f60babb9cefb3de4f417513705b14e38dd0678b9334",
+    ".kimi/skills/speckit-specify/SKILL.md": "2c5770de5de53c6b2a72064a6d59e51aab0e64b7cc5e8dd4dfbc7667afecefe5",
+    ".kimi/skills/speckit-tasks/SKILL.md": "cb1a926eaf8ac36798dbd5b54ded7a185b808ea5ad1c07e8941da993a372a01a",
+    ".kimi/skills/speckit-taskstoissues/SKILL.md": "11e4798c0968a746fe420017831224518406cd57a917fe41f1899498b08111a1",
+    ".specify/integrations/kimi/scripts/update-context.sh": "47b364160e44139934c55be8cf2fa19cb2e9ed47e8a7f4eb2fbb22071f4fc4b2"
+  }
+}

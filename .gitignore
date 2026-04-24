@@ -1,0 +1,26 @@
+# Binaries
+*.exe
+*.test
+*.out
+server
+
+# Environment
+.env
+.env.local
+
+# Dependencies / build
+vendor/
+bin/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

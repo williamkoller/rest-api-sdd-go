@@ -1,0 +1,942 @@
+{
+  "info": {
+    "name": "Escola Gestão API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "REST API para sistema de gerenciamento escolar"
+  },
+  "variable": [
+    { "key": "base_url",    "value": "http://localhost:8080/api/v1" },
+    { "key": "token",       "value": "" },
+    { "key": "school_id",   "value": "{{$guid}}" },
+    { "key": "unit_id",     "value": "{{$guid}}" },
+    { "key": "class_id",    "value": "{{$guid}}" },
+    { "key": "student_id",  "value": "{{$guid}}" },
+    { "key": "invoice_id",  "value": "{{$guid}}" },
+    { "key": "ticket_id",   "value": "{{$guid}}" },
+    { "key": "campaign_id", "value": "{{$guid}}" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": { "raw": "http://localhost:8080/health" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.access_token) {",
+                  "  pm.collectionVariables.set('token', res.data.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/login" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@escola.com\",\n  \"password\": \"secret123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/refresh" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"<refresh_token_aqui>\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/logout" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"<refresh_token_aqui>\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Escolas",
+      "item": [
+        {
+          "name": "Listar Escolas",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/schools?page=1&per_page=20",
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "per_page", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar Escola",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "  pm.collectionVariables.set('school_id', res.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/schools" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Colégio Excelência\",\n  \"cnpj\": \"12.345.678/0001-99\",\n  \"email\": \"contato@colegio.com\",\n  \"phone\": \"(11) 3000-0000\",\n  \"address\": \"Rua das Flores, 100 - São Paulo/SP\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Buscar Escola",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/schools/{{school_id}}" }
+          }
+        },
+        {
+          "name": "Atualizar Escola",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/schools/{{school_id}}" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Colégio Excelência Atualizado\",\n  \"phone\": \"(11) 3000-1111\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Unidades",
+      "item": [
+        {
+          "name": "Listar Unidades da Escola",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/schools/{{school_id}}/units" }
+          }
+        },
+        {
+          "name": "Criar Unidade",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "  pm.collectionVariables.set('unit_id', res.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/schools/{{school_id}}/units" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Unidade Centro\",\n  \"address\": \"Av. Paulista, 1000 - São Paulo/SP\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Buscar Unidade",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/units/{{unit_id}}" }
+          }
+        },
+        {
+          "name": "Atualizar Unidade",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/units/{{unit_id}}" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Unidade Centro - Atualizada\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Salas",
+      "item": [
+        {
+          "name": "Listar Salas da Unidade",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/units/{{unit_id}}/classrooms" }
+          }
+        },
+        {
+          "name": "Criar Sala",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/units/{{unit_id}}/classrooms" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"SALA-01\",\n  \"capacity\": 35\n}"
+            }
+          }
+        },
+        {
+          "name": "Atualizar Sala",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/classrooms/<classroom_id>" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"capacity\": 40\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Turmas",
+      "item": [
+        {
+          "name": "Listar Turmas da Unidade",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/units/{{unit_id}}/classes" }
+          }
+        },
+        {
+          "name": "Criar Turma",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "  pm.collectionVariables.set('class_id', res.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/units/{{unit_id}}/classes" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"5º Ano A\",\n  \"academic_year\": 2026,\n  \"shift\": \"morning\",\n  \"classroom_id\": \"<classroom_id>\",\n  \"grade_level\": \"5th\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Buscar Turma",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/classes/{{class_id}}" }
+          }
+        },
+        {
+          "name": "Atualizar Turma",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/classes/{{class_id}}" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shift\": \"afternoon\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Alunos & Matrículas",
+      "item": [
+        {
+          "name": "Listar Alunos da Turma",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/classes/{{class_id}}/students" }
+          }
+        },
+        {
+          "name": "Matricular Aluno na Turma",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "  pm.collectionVariables.set('student_id', res.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/classes/{{class_id}}/students" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"João Silva\",\n  \"birth_date\": \"2015-03-20\",\n  \"registration_number\": \"2026001\",\n  \"guardian_id\": \"<guardian_user_id>\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Buscar Aluno",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/students/{{student_id}}" }
+          }
+        },
+        {
+          "name": "Atualizar Aluno",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/students/{{student_id}}" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"João da Silva\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Desmatricular Aluno",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{base_url}}/classes/{{class_id}}/students/{{student_id}}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Frequência",
+      "item": [
+        {
+          "name": "Registrar Frequência (batch)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/classes/{{class_id}}/attendance" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2026-04-24\",\n  \"records\": [\n    { \"student_id\": \"{{student_id}}\", \"status\": \"present\" },\n    { \"student_id\": \"<outro_student_id>\", \"status\": \"absent\", \"note\": \"faltou sem justificativa\" }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Frequência do Aluno",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/students/{{student_id}}/attendance?from=2026-01-01&to=2026-04-30",
+              "query": [
+                { "key": "from", "value": "2026-01-01" },
+                { "key": "to",   "value": "2026-04-30" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notas",
+      "item": [
+        {
+          "name": "Lançar Notas (batch)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/classes/{{class_id}}/grades" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"Matemática\",\n  \"period\": \"1T\",\n  \"grades\": [\n    { \"student_id\": \"{{student_id}}\", \"value\": 8.5 },\n    { \"student_id\": \"<outro_student_id>\", \"value\": 7.0 }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Notas do Aluno",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/students/{{student_id}}/grades?subject=Matemática&period=1T",
+              "query": [
+                { "key": "subject", "value": "Matemática" },
+                { "key": "period",  "value": "1T" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Financeiro",
+      "item": [
+        {
+          "name": "Gerar Cobranças (batch por unidade)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/invoices/generate" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unit_id\": \"{{unit_id}}\",\n  \"academic_year\": 2026,\n  \"reference\": \"MENSALIDADE_MAIO_2026\",\n  \"due_date\": \"2026-05-10\",\n  \"amount\": 850.00\n}"
+            }
+          }
+        },
+        {
+          "name": "Faturas do Aluno",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/students/{{student_id}}/invoices?status=pending",
+              "query": [{ "key": "status", "value": "pending" }]
+            }
+          }
+        },
+        {
+          "name": "Buscar Fatura",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "  pm.collectionVariables.set('invoice_id', res.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/invoices/{{invoice_id}}" }
+          }
+        },
+        {
+          "name": "Registrar Pagamento",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/invoices/{{invoice_id}}/pay" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount_paid\": 850.00,\n  \"method\": \"pix\",\n  \"gateway_ref\": \"PIX-20260424-001\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Download Recibo (PDF)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/invoices/{{invoice_id}}/receipt" }
+          }
+        },
+        {
+          "name": "Relatório de Inadimplência",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/schools/{{school_id}}/financial/delinquency?days_overdue=5&unit_id={{unit_id}}",
+              "query": [
+                { "key": "days_overdue", "value": "5" },
+                { "key": "unit_id",      "value": "{{unit_id}}" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rematrícula",
+      "item": [
+        {
+          "name": "Criar Campanha de Rematrícula",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "  pm.collectionVariables.set('campaign_id', res.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/reenrollment/campaigns" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unit_id\": \"{{unit_id}}\",\n  \"academic_year\": 2027,\n  \"deadline\": \"2026-11-30\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Dashboard da Campanha",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/reenrollment/campaigns/{{campaign_id}}/dashboard" }
+          }
+        },
+        {
+          "name": "Responder Rematrícula (confirmar)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/reenrollment/campaigns/{{campaign_id}}/respond" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_id\": \"{{student_id}}\",\n  \"status\": \"confirmed\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Responder Rematrícula (declinar)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/reenrollment/campaigns/{{campaign_id}}/respond" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_id\": \"{{student_id}}\",\n  \"status\": \"declined\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fila de Espera",
+      "item": [
+        {
+          "name": "Entrar na Fila (anônimo ou autenticado)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/units/{{unit_id}}/waitlist" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"guardian_name\": \"Maria Oliveira\",\n  \"guardian_email\": \"maria@email.com\",\n  \"student_name\": \"Pedro Oliveira\",\n  \"grade_level\": \"1st\",\n  \"academic_year\": 2027,\n  \"referral_id\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar Fila da Unidade",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/units/{{unit_id}}/waitlist?status=waiting&page=1&per_page=20",
+              "query": [
+                { "key": "status",   "value": "waiting" },
+                { "key": "page",     "value": "1" },
+                { "key": "per_page", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Atualizar Status da Fila",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/waitlist/<entry_id>/status" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"offer_made\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Agenda Digital",
+      "item": [
+        {
+          "name": "Listar Agenda da Turma",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/classes/{{class_id}}/agenda?type=homework&from=2026-04-01&to=2026-04-30",
+              "query": [
+                { "key": "type", "value": "homework" },
+                { "key": "from", "value": "2026-04-01" },
+                { "key": "to",   "value": "2026-04-30" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar Item na Agenda",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/classes/{{class_id}}/agenda" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"homework\",\n  \"title\": \"Exercícios de Frações\",\n  \"description\": \"Resolver exercícios da pág. 45 a 50 do livro.\",\n  \"due_date\": \"2026-04-28\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Atualizar Item da Agenda",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/agenda/<agenda_id>" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"homework\",\n  \"title\": \"Exercícios de Frações (Revisado)\",\n  \"description\": \"Resolver exercícios da pág. 45 a 52.\",\n  \"due_date\": \"2026-04-29\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Excluir Item da Agenda",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{base_url}}/agenda/<agenda_id>" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Calendário Escolar",
+      "item": [
+        {
+          "name": "Listar Calendário",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/schools/{{school_id}}/calendar?from=2026-01-01&to=2026-12-31",
+              "query": [
+                { "key": "from", "value": "2026-01-01" },
+                { "key": "to",   "value": "2026-12-31" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar Evento no Calendário",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/schools/{{school_id}}/calendar" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Recesso de Julho\",\n  \"description\": \"Recesso escolar de meio de ano\",\n  \"type\": \"recess\",\n  \"start_date\": \"2026-07-14\",\n  \"end_date\": \"2026-07-25\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Atualizar Evento",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/calendar/<event_id>" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Recesso de Julho (Atualizado)\",\n  \"type\": \"recess\",\n  \"start_date\": \"2026-07-14\",\n  \"end_date\": \"2026-07-28\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Excluir Evento",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{base_url}}/calendar/<event_id>" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Atendimento (Tickets)",
+      "item": [
+        {
+          "name": "Abrir Ticket",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.id) {",
+                  "  pm.collectionVariables.set('ticket_id', res.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/tickets" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"financial\",\n  \"subject\": \"Dúvida sobre boleto de maio\",\n  \"message\": \"Gostaria de entender os juros cobrados na fatura de maio.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar Tickets",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/tickets?status=open&page=1&per_page=20",
+              "query": [
+                { "key": "status",   "value": "open" },
+                { "key": "page",     "value": "1" },
+                { "key": "per_page", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar Ticket",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/tickets/{{ticket_id}}" }
+          }
+        },
+        {
+          "name": "Responder Ticket",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/tickets/{{ticket_id}}/reply" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"body\": \"Os juros são de 2% ao mês conforme contrato. Pode verificar na cláusula 5.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Atualizar Status do Ticket",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/tickets/{{ticket_id}}/status" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"resolved\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Relatório de Atendimento",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/schools/{{school_id}}/tickets/report?from=2026-01-01&to=2026-04-30",
+              "query": [
+                { "key": "from", "value": "2026-01-01" },
+                { "key": "to",   "value": "2026-04-30" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Feed Escolar",
+      "item": [
+        {
+          "name": "Listar Feed da Escola",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/schools/{{school_id}}/feed?page=1&per_page=20",
+              "query": [
+                { "key": "page",     "value": "1" },
+                { "key": "per_page", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Publicar no Feed",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/feed" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"body\": \"Informamos que na próxima sexta-feira haverá apresentação cultural. A presença dos pais é muito bem-vinda!\",\n  \"image_url\": \"https://cdn.escola.com/img/banner-apresentacao.jpg\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Excluir Post do Feed",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{base_url}}/feed/<post_id>" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Indicação de Amigos",
+      "item": [
+        {
+          "name": "Meu Link de Indicação",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/me/referral-link" }
+          }
+        },
+        {
+          "name": "Relatório de Indicações (admin)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/schools/{{school_id}}/referrals?status=registered&page=1&per_page=20",
+              "query": [
+                { "key": "status",   "value": "registered" },
+                { "key": "page",     "value": "1" },
+                { "key": "per_page", "value": "20" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cardápio",
+      "item": [
+        {
+          "name": "Buscar Cardápio da Semana",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/units/{{unit_id}}/menu?week_start=2026-04-27",
+              "query": [{ "key": "week_start", "value": "2026-04-27" }]
+            }
+          }
+        },
+        {
+          "name": "Publicar Cardápio",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/units/{{unit_id}}/menu" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"week_start\": \"2026-04-27\",\n  \"items\": [\n    { \"day_of_week\": \"monday\",    \"meal_type\": \"lunch\",     \"description\": \"Frango grelhado, arroz, feijão, salada\" },\n    { \"day_of_week\": \"monday\",    \"meal_type\": \"snack\",     \"description\": \"Vitamina de banana\" },\n    { \"day_of_week\": \"tuesday\",   \"meal_type\": \"lunch\",     \"description\": \"Macarrão com molho, salada\" },\n    { \"day_of_week\": \"wednesday\", \"meal_type\": \"lunch\",     \"description\": \"Peixe assado, purê, couve\" },\n    { \"day_of_week\": \"thursday\",  \"meal_type\": \"lunch\",     \"description\": \"Feijoada, arroz, laranja\" },\n    { \"day_of_week\": \"friday\",    \"meal_type\": \"lunch\",     \"description\": \"Pizza integral, salada\" }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Substituir Itens do Cardápio",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/menu/<menu_id>" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    { \"day_of_week\": \"monday\", \"meal_type\": \"lunch\", \"description\": \"Frango ao molho, arroz integral\" },\n    { \"day_of_week\": \"monday\", \"meal_type\": \"snack\", \"description\": \"Maçã + suco natural\" }\n  ]\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Grade Curricular",
+      "item": [
+        {
+          "name": "Buscar Grade da Turma",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/classes/{{class_id}}/curriculum" }
+          }
+        },
+        {
+          "name": "Configurar Grade Curricular",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/classes/{{class_id}}/curriculum" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"entries\": [\n    { \"subject\": \"Matemática\",  \"teacher_id\": \"<teacher_id>\", \"day_of_week\": \"monday\",    \"start_time\": \"08:00\", \"end_time\": \"09:30\" },\n    { \"subject\": \"Português\",   \"teacher_id\": \"<teacher_id>\", \"day_of_week\": \"monday\",    \"start_time\": \"09:45\", \"end_time\": \"11:15\" },\n    { \"subject\": \"Ciências\",    \"teacher_id\": \"<teacher_id>\", \"day_of_week\": \"tuesday\",   \"start_time\": \"08:00\", \"end_time\": \"09:30\" },\n    { \"subject\": \"História\",    \"teacher_id\": \"<teacher_id>\", \"day_of_week\": \"wednesday\", \"start_time\": \"08:00\", \"end_time\": \"09:30\" },\n    { \"subject\": \"Educação Fís.\",\"teacher_id\": \"<teacher_id>\", \"day_of_week\": \"thursday\",  \"start_time\": \"10:00\", \"end_time\": \"11:30\" },\n    { \"subject\": \"Arte\",         \"teacher_id\": \"<teacher_id>\", \"day_of_week\": \"friday\",    \"start_time\": \"08:00\", \"end_time\": \"09:30\" }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Atualizar Aula da Grade",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/curriculum/<entry_id>" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"Matemática\",\n  \"teacher_id\": \"<novo_teacher_id>\",\n  \"day_of_week\": \"monday\",\n  \"start_time\": \"08:00\",\n  \"end_time\": \"09:30\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Remover Aula da Grade",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{base_url}}/curriculum/<entry_id>" }
+          }
+        }
+      ]
+    }
+  ]
+}

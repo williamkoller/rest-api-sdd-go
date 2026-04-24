@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS menu_items;
+DROP TABLE IF EXISTS menus;
+DROP TYPE IF EXISTS meal_type;
+DROP TYPE IF EXISTS day_of_week;
